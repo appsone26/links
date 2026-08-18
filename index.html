@@ -169,7 +169,7 @@ nav .fade:nth-child(5){animation-delay:.38s}
            stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
-    <a class="card fade" href="mailto:contato@appsone.com.br">
+    <a class="card fade" id="mail" href="mailto:contato@appsone.com.br">
       <span class="txt">
         <b>E-mail</b>
         <span>contato@appsone.com.br</span>
@@ -183,5 +183,24 @@ nav .fade:nth-child(5){animation-delay:.38s}
   <footer>Rio de Janeiro · Brasil</footer>
 
 </div>
+
+<script>
+/* No celular, o mailto abre o app de e-mail da pessoa.
+   No computador, o mailto costuma nao abrir nada, entao mandamos
+   para a janela de nova mensagem do Gmail na web. */
+(function(){
+  var a=document.getElementById('mail');
+  if(!a) return;
+  var email='contato@appsone.com.br';
+  var assunto='Contato pelo site da APPS ONE';
+  var movel=/Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+  if(!movel){
+    a.href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(email)
+          +'&su='+encodeURIComponent(assunto);
+    a.target='_blank';
+    a.rel='noopener';
+  }
+})();
+</script>
 </body>
 </html>
