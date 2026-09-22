@@ -1,0 +1,9 @@
+_rascunho/
+_dados/
+*.bkp
+*.bak
+*.dump
+*.zip
+.env
+.env.*
+node_modules/
