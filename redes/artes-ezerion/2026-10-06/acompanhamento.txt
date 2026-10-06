@@ -1,0 +1,16 @@
+📘 Andamentos do tribunal, automaticamente.
+
+O acompanhamento é ativado ao salvar o processo com o número completo.
+
+1. Cadastre o processo com o número no padrão do CNJ
+2. A placa Monitorando indica que o acompanhamento está ativo
+3. Com andamento novo, o processo sobe na lista e fica destacado
+4. Por volta das 10h, a equipe recebe um e-mail com os processos que tiveram andamento
+
+O acompanhamento não substitui a conferência do Diário Oficial e dos autos.
+
+Salve esta publicação para consultar depois.
+
+👉 Teste grátis por 2 meses, sem cartão: ezerion.com.br (link na bio)
+
+#ezerion #advocacia #advogados #gestaojuridica #escritoriodeadvocacia #tecnologiajuridica
