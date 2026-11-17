@@ -1,0 +1,53 @@
+# Baixa as fotos dos produtos para os cards do Cataki (Edgard, 01/10/2026).
+# A nuvem onde rodam as tarefas agendadas não alcança os servidores de foto das lojas,
+# mas alcança o GitHub. Os servidores do GitHub não têm esse bloqueio.
+#
+# Como usar: commitar redes/fotos/pedidos/<nome>.json com
+#   [{"id": "<product_id>", "url": "https://.../foto.jpg"}, ...]
+# Este workflow baixa cada foto para redes/fotos/<product_id>.jpg e faz commit.
+# Quem pediu espera o arquivo aparecer em raw.githubusercontent.com (1 a 2 min).
+name: baixa-fotos
+on:
+  push:
+    paths: ["redes/fotos/pedidos/**.json"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: baixa-fotos
+  cancel-in-progress: false
+jobs:
+  baixa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar fotos pedidas
+        run: |
+          set -u
+          shopt -s nullglob
+          for p in redes/fotos/pedidos/*.json; do
+            jq -c '.[]' "$p" | while read -r item; do
+              id=$(jq -r '.id' <<<"$item"); url=$(jq -r '.url' <<<"$item")
+              case "$id" in *[!A-Za-z0-9-]*|"") echo "id inválido: $id"; continue;; esac
+              dest="redes/fotos/$id.jpg"
+              [ -s "$dest" ] && continue
+              url="${url/#http:\/\//https://}"
+              if curl -fsSL --max-time 30 -A "Mozilla/5.0" -o "$dest.tmp" "$url"; then
+                if file --mime-type -b "$dest.tmp" | grep -q '^image/'; then
+                  mv "$dest.tmp" "$dest"; echo "ok  $id"
+                else
+                  rm -f "$dest.tmp"; echo "não é imagem: $id"
+                fi
+              else
+                rm -f "$dest.tmp"; echo "falhou: $id $url"
+              fi
+            done
+          done
+      - name: Commit
+        run: |
+          git config user.name "baixa-fotos"
+          git config user.email "baixa-fotos@users.noreply.github.com"
+          git add redes/fotos/*.jpg 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nada novo"; exit 0; fi
+          git commit -m "redes: fotos de produtos baixadas"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin main && break; sleep 5; done
